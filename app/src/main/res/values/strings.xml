@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">InventoryApp</string>
+
+    <string name="menu_main_insert_dummy_data">Insert Dummy Data</string>
+    <string name="menu_main_delete_data">Delete all Data.</string>
+
+    <string name="main_toast_insert_msg">New Record Added with id </string>
+    <string name="main_toast_delete_msg">All Data Deleted.</string>
+</resources>
