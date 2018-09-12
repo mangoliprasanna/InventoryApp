@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         tableCountText = (TextView) findViewById(R.id.tableCountText);
 
         updateCount();
+        displayData();
     }
 
     @Override
@@ -68,6 +69,35 @@ public class MainActivity extends AppCompatActivity {
         return delVal;
     }
 
+    private void displayData(){
+
+        SQLiteDatabase db = productDBHelper.getReadableDatabase();
+        String[] projections = {
+                ProductEntry.COLUMN_PRD_ID,
+                ProductEntry.COLUMN_PRD_NAME,
+                ProductEntry.COLUMN_PRD_PRICE,
+                ProductEntry.COLUMN_PRD_QUANTITY
+        };
+
+        Cursor cursor = db.query(ProductEntry.TABLE_NAME, projections, null, null, null, null, null);
+        try{
+
+            int idColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_ID);
+            int prdNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_NAME);
+            int prdPriceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_PRICE);
+            int prdQuantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_QUANTITY);
+            while(cursor.moveToNext()){
+                Log.v("Product ID " , cursor.getString(idColumnIndex));
+                Log.v("Product Name " , cursor.getString(prdNameColumnIndex));
+                Log.v("Product Price ", cursor.getString(prdPriceColumnIndex));
+                Log.v("Product Quntity ", cursor.getString(prdQuantityColumnIndex));
+            }
+
+        } finally {
+            cursor.close();
+
+        }
+    }
     private void insetData() {
         // Get Writable Database.
         SQLiteDatabase db = productDBHelper.getWritableDatabase();
@@ -85,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
 
         Log.v("ROW_INSERTED", "NEW ID : " + newId);
+        displayData();
         Toast.makeText(MainActivity.this, getString(R.string.main_toast_insert_msg) + " " + String.valueOf(newId), Toast.LENGTH_SHORT).show();
     }
 }
