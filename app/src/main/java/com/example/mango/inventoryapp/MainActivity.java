@@ -80,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Cursor cursor = db.query(ProductEntry.TABLE_NAME, projections, null, null, null, null, null);
+        tableCountText.setText("Product Table Containts : " + cursor.getCount() + " rows.\n");
+        tableCountText.append(ProductEntry.COLUMN_PRD_ID + " - " +
+                            ProductEntry.COLUMN_PRD_NAME + " - " +
+                            ProductEntry.COLUMN_PRD_PRICE + " - " +
+                            ProductEntry.COLUMN_PRD_QUANTITY + " - \n");
         try{
 
             int idColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_ID);
@@ -87,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
             int prdPriceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_PRICE);
             int prdQuantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_QUANTITY);
             while(cursor.moveToNext()){
+                tableCountText.append(
+                        "\n" + cursor.getString(idColumnIndex) + " - " +
+                                cursor.getString(prdNameColumnIndex) + " - " +
+                                cursor.getInt(prdPriceColumnIndex) + " - " +
+                                cursor.getInt(prdQuantityColumnIndex) + " - "
+                );
                 Log.v("Product ID " , cursor.getString(idColumnIndex));
                 Log.v("Product Name " , cursor.getString(prdNameColumnIndex));
                 Log.v("Product Price ", cursor.getString(prdPriceColumnIndex));
