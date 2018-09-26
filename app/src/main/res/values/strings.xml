@@ -1,9 +1,26 @@
 <resources>
     <string name="app_name">InventoryApp</string>
+    <string name="rupeeSymbol">\u20B9</string>
+    <string name="settingsActivity">Settings</string>
+    <string name="detailActivity">Details</string>
 
     <string name="menu_main_insert_dummy_data">Insert Dummy Data</string>
     <string name="menu_main_delete_data">Delete all Data.</string>
 
-    <string name="main_toast_insert_msg">New Record Added with id </string>
-    <string name="main_toast_delete_msg">All Data Deleted.</string>
+    <string name="delete_confirm_text">Are you sure want to delete?</string>
+    <string name="delete_confirm_positive">Yes</string>
+    <string name="delete_confirm_negative">No</string>
+
+    <string name="quantityAvailableText">Quantity : </string>
+    <string name="noProductsMessage">No products in inventory !!.</string>
+    <string name="list_button">Sale</string>
+
+    <string name="settings_default_quantityIncrement_value">1</string><!-- default Value -->
+    <string name="settings_default_quantityIncrement_key">quantity_increment</string>
+    <string name="settings_default_quantityIncrement_lable">Quantity Increment</string>
+
+    <string name="settings_minimum_safe_quantity_value">5</string>
+    <string name="settings_minimum_safe_quantity_key">minimum_safe_quantity</string>
+    <string name="settings_minimum_safe_quantity_lable">Warn when quantity is less then</string>
+
 </resources>

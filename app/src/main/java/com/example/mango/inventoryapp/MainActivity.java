@@ -1,117 +1,116 @@
 package com.example.mango.inventoryapp;
 
+
 import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.CursorLoader;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.mango.inventoryapp.data.ProductDBHelper;
 import com.example.mango.inventoryapp.data.ProductContract.ProductEntry;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private  ProductDBHelper productDBHelper;
-    private TextView tableCountText;
+    private final int LOADER_ID = 0;
+    private ProductAdapter productAdapter;
+    private ListView productList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create instance of ProductDBHelper for further use.
-        productDBHelper  = new ProductDBHelper(MainActivity.this);
-        tableCountText = (TextView) findViewById(R.id.tableCountText);
+        // Initialisation of ListView
+        productList = (ListView) findViewById(R.id.productList);
 
-        updateCount();
-        displayData();
+        // Creating Adapter
+        productAdapter = new ProductAdapter(this, null);
+
+        // Empty View when list is empty.
+        productList.setEmptyView(findViewById(R.id.emptyView));
+
+        // Handling item clicks.
+        productList.setOnItemClickListener (new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        productList.setAdapter(productAdapter);
+        productList.setDescendantFocusability(ListView.FOCUS_BLOCK_DESCENDANTS);
+
+        // Initiating Loader.
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu from res/menu/menu_main.xml
-        // Adding menu to appBar.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem){
-
+        // Handling menu item clicks.
         switch (menuItem.getItemId()) {
             case R.id.action_insert_dummy_data:
                 insetData();
                 break;
             case R.id.action_delete_all_entries:
-                int deleteVal = deleteAllData();
-                Toast.makeText(MainActivity.this, getString(R.string.main_toast_insert_msg) + " " + String.valueOf(deleteVal), Toast.LENGTH_SHORT).show();
+                // Displaying confirmation dialog to confirm delete all.
+                showDeleteConfirmationDialog();
+                break;
+            case R.id.action_settings:
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+                // starting settings activity.
+                startActivity(i);
                 break;
         }
         return true;
     }
 
-    private void updateCount(){
-        SQLiteDatabase db = productDBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + ProductEntry.TABLE_NAME, null);
-        tableCountText.setText("Total Records : " + cursor.getCount());
-        cursor.close();
-        db.close();
+    // Delete all function used to delete all data from dattabase after user confirmation.
+    private void deleteALlData(){
+        int i = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
+        Toast.makeText(this, i + " Rows deleted.", Toast.LENGTH_SHORT).show();
     }
+    private void showDeleteConfirmationDialog() {
 
-    private int deleteAllData(){
-        SQLiteDatabase db = productDBHelper.getWritableDatabase();
-        int delVal = db.delete(ProductEntry.TABLE_NAME, null, null);
-        db.close();
-        updateCount();
-        return delVal;
-    }
-
-    private void displayData(){
-
-        SQLiteDatabase db = productDBHelper.getReadableDatabase();
-        String[] projections = {
-                ProductEntry.COLUMN_PRD_ID,
-                ProductEntry.COLUMN_PRD_NAME,
-                ProductEntry.COLUMN_PRD_PRICE,
-                ProductEntry.COLUMN_PRD_QUANTITY
-        };
-
-        Cursor cursor = db.query(ProductEntry.TABLE_NAME, projections, null, null, null, null, null);
-        tableCountText.setText("Product Table Containts : " + cursor.getCount() + " rows.\n");
-        tableCountText.append(ProductEntry.COLUMN_PRD_ID + " - " +
-                            ProductEntry.COLUMN_PRD_NAME + " - " +
-                            ProductEntry.COLUMN_PRD_PRICE + " - " +
-                            ProductEntry.COLUMN_PRD_QUANTITY + " - \n");
-        try{
-
-            int idColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_ID);
-            int prdNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_NAME);
-            int prdPriceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_PRICE);
-            int prdQuantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRD_QUANTITY);
-            while(cursor.moveToNext()){
-                tableCountText.append(
-                        "\n" + cursor.getString(idColumnIndex) + " - " +
-                                cursor.getString(prdNameColumnIndex) + " - " +
-                                cursor.getInt(prdPriceColumnIndex) + " - " +
-                                cursor.getInt(prdQuantityColumnIndex) + " - "
-                );
-                Log.v("Product ID " , cursor.getString(idColumnIndex));
-                Log.v("Product Name " , cursor.getString(prdNameColumnIndex));
-                Log.v("Product Price ", cursor.getString(prdPriceColumnIndex));
-                Log.v("Product Quntity ", cursor.getString(prdQuantityColumnIndex));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.delete_confirm_text));
+        // Handling positive response.
+        builder.setPositiveButton(getString(R.string.delete_confirm_positive),  new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteALlData();
             }
+        });
+        // Handling Negative Response.
+        builder.setNegativeButton(R.string.delete_confirm_negative, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
 
-        } finally {
-            cursor.close();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
 
-        }
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
+
     private void insetData() {
-        // Get Writable Database.
-        SQLiteDatabase db = productDBHelper.getWritableDatabase();
 
         // Creating contectValues.
         ContentValues contentValues = new ContentValues();
@@ -120,13 +119,23 @@ public class MainActivity extends AppCompatActivity {
         contentValues.put(ProductEntry.COLUMN_PRD_QUANTITY, 10);
         contentValues.put(ProductEntry.COLUMN_SUP_NAME, "Sup 1");
         contentValues.put(ProductEntry.COLUMN_SUP_PHONE, "1234567890");
+        getContentResolver().insert(ProductEntry.CONTENT_URI, contentValues);
+    }
 
-        long newId  = db.insert(ProductEntry.TABLE_NAME, null, contentValues);
-        updateCount();
-        db.close();
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        // Creating cursor loader to get all product data from database.
+        return new CursorLoader(this, ProductEntry.CONTENT_URI, null, null, null, null);
+    }
 
-        Log.v("ROW_INSERTED", "NEW ID : " + newId);
-        displayData();
-        Toast.makeText(MainActivity.this, getString(R.string.main_toast_insert_msg) + " " + String.valueOf(newId), Toast.LENGTH_SHORT).show();
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Swap for new cursor.
+        productAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        productAdapter.swapCursor(null);
     }
 }

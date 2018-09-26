@@ -13,4 +13,12 @@
         android:id="@+id/action_delete_all_entries"
         android:title="@string/menu_main_delete_data"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"
+        android:iconTint="@android:color/white"
+        app:showAsAction="always" />
+
 </menu>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="list_image_size">52dp</dimen>
+    <dimen name="list_prdName_size">16sp</dimen>
+    <dimen name="emptyListImage">100dp</dimen>
+</resources>

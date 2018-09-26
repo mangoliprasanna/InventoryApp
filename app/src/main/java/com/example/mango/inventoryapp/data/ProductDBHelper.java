@@ -16,13 +16,13 @@ public class ProductDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        final String CREATE_TABLE = "CREATE TABLE products(" +
-                ProductEntry.COLUMN_PRD_ID + " Integer Primary Key Autoincrement," +
-                ProductEntry.COLUMN_PRD_NAME +" Text NOT NULL," +
-                ProductEntry.COLUMN_PRD_PRICE + " Integer NOT NULL," +
-                ProductEntry.COLUMN_PRD_QUANTITY + " Integer," +
-                ProductEntry.COLUMN_SUP_NAME + " Text NOT NULL, " +
-                ProductEntry.COLUMN_SUP_PHONE + " Text NOT NULL " +
+        final String CREATE_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME  + "(" +
+                ProductEntry.COLUMN_PRD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ProductEntry.COLUMN_PRD_NAME +" TEXT NOT NULL," +
+                ProductEntry.COLUMN_PRD_PRICE + " INTEGER NOT NULL," +
+                ProductEntry.COLUMN_PRD_QUANTITY + " INTEGER," +
+                ProductEntry.COLUMN_SUP_NAME + " TEXT NOT NULL, " +
+                ProductEntry.COLUMN_SUP_PHONE + " TEXT NOT NULL " +
                 ");";
         sqLiteDatabase.execSQL(CREATE_TABLE);
     }

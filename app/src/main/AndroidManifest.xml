@@ -16,6 +16,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/detailActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/settingsActivity" />
+
+        <provider
+            android:name=".data.ProductProvider"
+            android:authorities="com.example.mango.inventoryapp"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>
