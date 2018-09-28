@@ -22,15 +22,17 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/settingsActivity" />
+            android:label="@string/settingsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".EditActivity"
+            android:parentActivityName=".MainActivity" />
+
 
         <provider
             android:name=".data.ProductProvider"
             android:authorities="com.example.mango.inventoryapp"
             android:exported="false" />
-
-
     </application>
 
 </manifest>

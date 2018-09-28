@@ -4,4 +4,7 @@
     <dimen name="list_image_size">52dp</dimen>
     <dimen name="list_prdName_size">16sp</dimen>
     <dimen name="emptyListImage">100dp</dimen>
+    <dimen name="detail_quantitySize">20sp</dimen>
+    <dimen name="margin_between">5dp</dimen>
+    <dimen name="empty_list_textView">15sp</dimen>
 </resources>

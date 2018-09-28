@@ -1,6 +1,6 @@
 package com.example.mango.inventoryapp;
 
-
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.content.CursorLoader;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private final int LOADER_ID = 0;
     private ProductAdapter productAdapter;
     private ListView productList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +45,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         productList.setOnItemClickListener (new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(MainActivity.this, DetailActivity.class);
+                i.setData(ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id));
+                startActivity(i);
             }
         });
+
         productList.setAdapter(productAdapter);
         productList.setDescendantFocusability(ListView.FOCUS_BLOCK_DESCENDANTS);
+
+        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, EditActivity.class));
+            }
+        });
 
         // Initiating Loader.
         getLoaderManager().initLoader(LOADER_ID, null, this);
@@ -59,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem){
         // Handling menu item clicks.
@@ -82,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // Delete all function used to delete all data from dattabase after user confirmation.
     private void deleteALlData(){
         int i = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
-        Toast.makeText(this, i + " Rows deleted.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, i + " " + getString(R.string.main_delete_all), Toast.LENGTH_SHORT).show();
     }
     private void showDeleteConfirmationDialog() {
 
@@ -114,23 +128,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Creating contectValues.
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ProductEntry.COLUMN_PRD_NAME, "prd_1");
-        contentValues.put(ProductEntry.COLUMN_PRD_PRICE, 200);
-        contentValues.put(ProductEntry.COLUMN_PRD_QUANTITY, 10);
-        contentValues.put(ProductEntry.COLUMN_SUP_NAME, "Sup 1");
-        contentValues.put(ProductEntry.COLUMN_SUP_PHONE, "1234567890");
+        contentValues.put(ProductEntry.COLUMN_PRD_NAME, getString(R.string.dummy_productName));
+        contentValues.put(ProductEntry.COLUMN_PRD_PRICE, getString(R.string.dummy_productPrice));
+        contentValues.put(ProductEntry.COLUMN_PRD_QUANTITY, getString(R.string.dummy_productQuantity));
+        contentValues.put(ProductEntry.COLUMN_SUP_NAME, getString(R.string.dummy_supName));
+        contentValues.put(ProductEntry.COLUMN_SUP_PHONE, getString(R.string.dummy_supContact));
         getContentResolver().insert(ProductEntry.CONTENT_URI, contentValues);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Creating cursor loader to get all product data from database.
-        return new CursorLoader(this, ProductEntry.CONTENT_URI, null, null, null, null);
+        // order is descending new products will come at top.
+        return new CursorLoader(this, ProductEntry.CONTENT_URI, null, null, null, ProductEntry.COLUMN_PRD_ID + " desc");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // Swap for new cursor.
         productAdapter.swapCursor(cursor);
     }
 

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mango.inventoryapp.data.ProductContract;
 
@@ -70,7 +71,8 @@ public class ProductAdapter extends CursorAdapter {
 
                     // Updating product by using contentResolver.
                     context.getContentResolver().update(productUri, values, null, new String[]{ String.valueOf(producID) });
-                }
+                } else
+                    Toast.makeText(context, context.getString(R.string.main_negative_quantity), Toast.LENGTH_SHORT).show();
             }
         });
     }
