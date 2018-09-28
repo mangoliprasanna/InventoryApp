@@ -59,7 +59,7 @@ public class ProductAdapter extends CursorAdapter {
             public void onClick(View view) {
                 if(currentQuantity > 0)
                 {
-                    // Decrementing the qu
+                    // Decrementing the quantity.
                     int newQuantity = currentQuantity - 1;
 
                     // Creating URI for specific product for updating new Quantity.
